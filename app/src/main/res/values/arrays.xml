@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Settings -->
+    <string-array name="pref_sort_order_titles">
+        <item>Most Popularity</item>
+        <item>Less Popularity</item>
+        <item>Highest Rating</item>
+        <item>Lowest Rating</item>
+    </string-array>
+
+    <string-array name="pref_sort_order_values">
+        <item>popularity.desc</item>
+        <item>popularity.asc</item>
+        <item>vote_average.desc</item>
+        <item>vote_average.asc</item>
+    </string-array>
+
+</resources>
