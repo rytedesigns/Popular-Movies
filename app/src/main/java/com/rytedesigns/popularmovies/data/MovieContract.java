@@ -29,7 +29,7 @@ public class MovieContract {
         public static final String TABLE_NAME = "movies";
 
         // columns
-        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_MOVIE_ID = "_id";
 
         public static final String COLUMN_TITLE = "title";
 
@@ -55,7 +55,8 @@ public class MovieContract {
          * @param id The ID of the record
          *           n A new Uri with the given ID appended to the end of the path
          */
-        public static Uri buildMovieWithId(long id) {
+        public static Uri buildMovieWithId(long id)
+        {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -109,12 +110,14 @@ public class MovieContract {
          * @param movieId The movie ID
          * @return the URI of the trailer
          */
-        public static Uri buildTrailerWithId(long movieId) {
+        public static Uri buildTrailerWithId(long movieId)
+        {
             return ContentUris.withAppendedId(CONTENT_URI, movieId);
         }
     }
 
-    public static final class ReviewEntry implements BaseColumns {
+    public static final class ReviewEntry implements BaseColumns
+    {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
 
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_REVIEW;

@@ -15,15 +15,18 @@ import com.rytedesigns.popularmovies.fragment.MovieDetailsFragment;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ReviewArrayAdapter extends CursorAdapter {
+public class ReviewArrayAdapter extends CursorAdapter
+{
     private static final String LOG_TAG = MovieImageAdapter.class.getSimpleName();
 
-    public ReviewArrayAdapter(Context context, Cursor c, int flags) {
+    public ReviewArrayAdapter(Context context, Cursor c, int flags)
+    {
         super(context, c, flags);
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+    public View newView(Context context, Cursor cursor, ViewGroup parent)
+    {
         View rootView = LayoutInflater.from(context).inflate(R.layout.list_item_review, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(rootView);
@@ -34,8 +37,9 @@ public class ReviewArrayAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        Log.d(LOG_TAG, "Sync Finished now display.");
+    public void bindView(View view, Context context, Cursor cursor)
+    {
+        Log.d(LOG_TAG, "Review Sync Finished now display.");
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 

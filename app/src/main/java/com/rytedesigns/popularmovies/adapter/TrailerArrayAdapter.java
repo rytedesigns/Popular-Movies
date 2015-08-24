@@ -15,18 +15,18 @@ import com.rytedesigns.popularmovies.fragment.MovieDetailsFragment;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * Created by ryan on 8/22/2015.
- */
-public class TrailerArrayAdapter extends CursorAdapter {
+public class TrailerArrayAdapter extends CursorAdapter
+{
     private static final String LOG_TAG = MovieImageAdapter.class.getSimpleName();
 
-    public TrailerArrayAdapter(Context context, Cursor c, int flags) {
+    public TrailerArrayAdapter(Context context, Cursor c, int flags)
+    {
         super(context, c, flags);
     }
 
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
+    public View newView(Context context, Cursor cursor, ViewGroup parent)
+    {
         View rootView = LayoutInflater.from(context).inflate(R.layout.list_item_trailer, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(rootView);
@@ -37,19 +37,29 @@ public class TrailerArrayAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        Log.d(LOG_TAG, "Sync Finished now display.");
+    public int getCount()
+    {
+        if (getCursor() != null)
+        {
+            return getCursor().getCount();
+        }
+
+        return 0;
+    }
+
+    @Override
+    public void bindView(View view, Context context, Cursor cursor)
+    {
+        Log.d(LOG_TAG, "Trailer Sync Finished now display.");
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        Log.d(LOG_TAG, "cursor size: " + cursor.getCount());
-
-        if (cursor.getCount() > 0) {
+        if (cursor.getCount() > 0)
+        {
             String trailerName = cursor.getString(MovieDetailsFragment.TRAILER_COL_TRAILER_NAME);
 
-            Log.d(LOG_TAG, "Trailer Name: " + trailerName);
-
-            if (trailerName != null) {
+            if (trailerName != null)
+            {
                 viewHolder.mTrailerNameTextView.setText(trailerName);
             }
         }
@@ -58,11 +68,13 @@ public class TrailerArrayAdapter extends CursorAdapter {
     /**
      * Cache the poster for the grid.
      */
-    public static class ViewHolder {
+    public static class ViewHolder
+    {
         @InjectView(R.id.trailerNameTextView)
         public TextView mTrailerNameTextView;
 
-        public ViewHolder(View view) {
+        public ViewHolder(View view)
+        {
             ButterKnife.inject(this, view);
         }
     }

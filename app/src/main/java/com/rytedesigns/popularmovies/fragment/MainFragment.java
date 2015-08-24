@@ -1,16 +1,16 @@
 package com.rytedesigns.popularmovies.fragment;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -37,19 +37,17 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @InjectView(R.id.movieGridView)
     public GridView mMovieGridView;
 
-    public static final int COL_ID = 0;
 
-    public static final int COL_MOVIE_ID = 1;
+    public static final int COL_MOVIE_ID = 0;
 
-    public static final int COL_POSTER_PATH = 2;
+    public static final int COL_POSTER_PATH = 1;
 
-    public static final int COL_TITLE = 3;
+    public static final int COL_TITLE = 2;
 
-    public static final int COL_FAVORITE = 4;
+    public static final int COL_FAVORITE = 3;
 
     private static final String[] MOVIE_COLUMNS = {
-            MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
-            MovieEntry.COLUMN_MOVIE_ID,
+            MovieEntry.TABLE_NAME + "." + MovieEntry.COLUMN_MOVIE_ID,
             MovieEntry.COLUMN_POSTER_PATH,
             MovieEntry.COLUMN_TITLE,
             MovieEntry.COLUMN_FAVORITE
@@ -82,7 +80,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
         Log.d(LOG_TAG, "onCreateView");
 
         // The MovieImageAdapter will take data from a source and
@@ -102,7 +101,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         // does crazy lifecycle related things.  It should feel like some stuff stretched out,
         // or magically appeared to take advantage of room, but data or place in the app was never
         // actually *lost*.
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY))
+        {
             // The listview probably hasn't even been populated yet.  Actually perform the
             // swapout in onLoadFinished.
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
@@ -121,17 +121,21 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     // since we read the location when we create the loader, all we need to do is restart things
-    public void onDisplayPreferenceChanged() {
-        Log.e(LOG_TAG, "MADE IT HERE IN onDisplayPreferenceChanged");
-
+    public void onDisplayPreferenceChanged()
+    {
         updateMovies();
 
         getLoaderManager().restartLoader(MOVIES_LOADER, null, this);
     }
 
-    private void updateMovies() {
-        Log.e("TAG", "MADE IT HERE IN updateMovies");
-
+    private void updateMovies()
+    {
+        MovieSyncAdapter.syncImmediately(getActivity());
+        MovieSyncAdapter.syncImmediately(getActivity());
+        MovieSyncAdapter.syncImmediately(getActivity());
+        MovieSyncAdapter.syncImmediately(getActivity());
+        MovieSyncAdapter.syncImmediately(getActivity());
+        MovieSyncAdapter.syncImmediately(getActivity());
         MovieSyncAdapter.syncImmediately(getActivity());
     }
 
@@ -180,14 +184,14 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         mMovieImageAdapter.swapCursor(data);
 
-        if (mPosition != ListView.INVALID_POSITION)
+        if (mPosition != GridView.INVALID_POSITION)
         {
             mMovieGridView.smoothScrollToPosition(mPosition);
         }
+        else
+        {
+            mPosition = GridView.SCROLLBAR_POSITION_DEFAULT;
 
-        if (mPosition != GridView.INVALID_POSITION) {
-            // If we don't need to restart the loader, and there's a desired position to restore
-            // to, do so now.
             mMovieGridView.smoothScrollToPosition(mPosition);
         }
     }
@@ -208,7 +212,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         if (cursor != null) {
             ((Callbacks) getActivity())
-                    .onItemSelected(MovieEntry.buildMovieWithId(cursor.getLong(COL_ID)));
+                    .onItemSelected(MovieEntry.buildMovieWithId(cursor.getLong(COL_MOVIE_ID)));
         }
 
         mPosition = position;

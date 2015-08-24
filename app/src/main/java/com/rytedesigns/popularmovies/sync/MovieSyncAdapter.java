@@ -30,37 +30,43 @@ import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
+public class MovieSyncAdapter extends AbstractThreadedSyncAdapter
+{
     // time in seconds when to sync
     private static final int HOUR_IN_SECONDS = 60;
-    private static final long DAY_IN_MILLIS = 1000 * HOUR_IN_SECONDS * 24;
     public static final int SYNC_INTERVAL = HOUR_IN_SECONDS * 12;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
+    private static final long DAY_IN_MILLIS = 1000 * HOUR_IN_SECONDS * 24;
     private static final String LOG_TAG = MovieSyncAdapter.class.getSimpleName();
+    private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
-    public MovieSyncAdapter(Context context, boolean autoInitialize) {
+    public MovieSyncAdapter(Context context, boolean autoInitialize)
+    {
         super(context, autoInitialize);
     }
 
     /**
      * Helper method to schedule the sync adapter periodic execution
      */
-    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime) {
+    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime)
+    {
         Log.d(LOG_TAG, "configurePeriodicSync");
 
         Account account = getSyncAccount(context);
         String authority = context.getString(R.string.content_provider_authority);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
             // we can enable inexact timers in our periodic sync
             SyncRequest request = new SyncRequest.Builder().
                     syncPeriodic(syncInterval, flexTime).
                     setSyncAdapter(account, authority).
                     setExtras(new Bundle()).build();
             ContentResolver.requestSync(request);
-        } else {
+        }
+        else
+        {
             ContentResolver.addPeriodicSync(account,
-                    authority, new Bundle(), syncInterval);
+                                            authority, new Bundle(), syncInterval);
         }
     }
 
@@ -69,7 +75,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
      *
      * @param context The context used to access the account service
      */
-    public static void syncImmediately(Context context) {
+    public static void syncImmediately(Context context)
+    {
         Log.d(LOG_TAG, "syncImmediately");
 
         Bundle bundle = new Bundle();
@@ -79,7 +86,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 
         ContentResolver.requestSync(getSyncAccount(context),
-                context.getString(R.string.content_provider_authority), bundle);
+                                    context.getString(R.string.content_provider_authority), bundle);
     }
 
     /**
@@ -90,7 +97,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
      * @param context The context used to access the account service
      * @return a fake account.
      */
-    public static Account getSyncAccount(Context context) {
+    public static Account getSyncAccount(Context context)
+    {
         Log.d(LOG_TAG, "getSyncAccount");
 
         // Get an instance of the Android account manager
@@ -100,12 +108,14 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         Account newAccount = new Account(context.getString(R.string.app_name), context.getString(R.string.sync_account_type));
 
         // If the password doesn't exist, the account doesn't exist
-        if (null == accountManager.getPassword(newAccount)) {
+        if (null == accountManager.getPassword(newAccount))
+        {
         /*
          * Add the account and account type, no password or user data
          * If successful, return the Account object, otherwise report an error.
          */
-            if (!accountManager.addAccountExplicitly(newAccount, "", null)) {
+            if (!accountManager.addAccountExplicitly(newAccount, "", null))
+            {
                 return null;
             }
             /*
@@ -121,9 +131,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         return newAccount;
     }
 
-    private static void onAccountCreated(Account newAccount, Context context) {
-        Log.d(LOG_TAG, "onAccountCreated");
-
+    private static void onAccountCreated(Account newAccount, Context context)
+    {
         /*
          * Since we've created an account
          */
@@ -140,7 +149,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
         syncImmediately(context);
     }
 
-    public static void initializeSyncAdapter(Context context) {
+    public static void initializeSyncAdapter(Context context)
+    {
         Log.d(LOG_TAG, "initializeSyncAdapter");
 
         getSyncAccount(context);
@@ -149,8 +159,13 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     @Override
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult)
+    {
         Log.d(LOG_TAG, "Starting sync");
+
+        getContext().getContentResolver().delete(MovieContract.TrailerEntry.CONTENT_URI, null, null);
+
+        getContext().getContentResolver().delete(MovieContract.ReviewEntry.CONTENT_URI, null, null);
 
         String sortOrder = Utility.getPreferredSortOrder(getContext());
 
@@ -160,14 +175,21 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
         TheMovieDatabaseService movieService = restAdapter.create(TheMovieDatabaseService.class);
 
-        movieService.discoverTopMovies(getContext().getString(R.string.api_key), sortOrder, new Callback<Movies>() {
+        Log.e("TEST", "onPreformSync Sort Order: " + sortOrder);
+
+        movieService.discoverTopMovies(getContext().getString(R.string.api_key), sortOrder, new Callback<Movies>()
+        {
             @Override
-            public void success(Movies movies, Response response) {
+            public void success(Movies movies, Response response)
+            {
+                Log.e("TEST", "onPreformSync Movie Size: " + movies.movies.size());
+
                 getMovieData(movies.movies);
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void failure(RetrofitError error)
+            {
                 Log.d(LOG_TAG, "Error: " + error);
             }
         });
@@ -180,10 +202,10 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private void getMovieData(List<Movie> movies) {
-        Log.e(LOG_TAG, "insertMovieData");
-
-        for (Movie movie : movies) {
+    private void getMovieData(List<Movie> movies)
+    {
+        for (Movie movie : movies)
+        {
             // Insert the new movie information into the database
             final Vector<ContentValues> trailerVector = new Vector<>(movies.size());
 
@@ -195,15 +217,18 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
             TheMovieDatabaseService movieService = restAdapter.create(TheMovieDatabaseService.class);
 
-            movieService.getMovie(movie.id, getContext().getString(R.string.api_key), "trailers, reviews", new Callback<Movie>() {
-
+            movieService.getMovie(movie.id, getContext().getString(R.string.api_key), "trailers,reviews", new Callback<Movie>()
+            {
                 @Override
-                public void success(Movie movie, Response response) {
+                public void success(Movie movie, Response response)
+                {
                     ContentValues movieValues = new ContentValues();
 
                     movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.id);
 
                     movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.title);
+
+                    Log.e("TEST", "getMovieData Movie Title: " + movie.title);
 
                     movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.releaseDate);
 
@@ -221,9 +246,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
                     getContext().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, movieValues);
 
-                    for (YouTubeTrailer trailer : movie.trailers.youTubTrailers) {
-                        Log.d(LOG_TAG, "has trailer " + trailer.trailerName);
-
+                    for (YouTubeTrailer trailer : movie.trailers.youTubTrailers)
+                    {
                         // Trailer
                         ContentValues trailerValues = new ContentValues();
 
@@ -240,7 +264,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                         trailerVector.add(trailerValues);
                     }
 
-                    if (trailerVector.size() > 0) {
+                    if (trailerVector.size() > 0)
+                    {
                         Log.e(LOG_TAG, trailerVector.size() + "");
 
                         ContentValues[] cvArray = new ContentValues[trailerVector.size()];
@@ -249,14 +274,13 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
                         int rowsCreated = getContext().getContentResolver().bulkInsert(MovieContract.TrailerEntry.CONTENT_URI, cvArray);
 
-                        Log.e(LOG_TAG, "Trailer Created: " + rowsCreated);
+                        Log.d(LOG_TAG, "Trailer Created: " + rowsCreated);
                     }
 
                     if (movie.reviews != null && movie.reviews.reviews != null)
                     {
-                        for (Review review : movie.reviews.reviews) {
-                            Log.d(LOG_TAG, "has review " + review.author + ": " + review.content);
-
+                        for (Review review : movie.reviews.reviews)
+                        {
                             // Trailer
                             ContentValues reviewValues = new ContentValues();
 
@@ -273,7 +297,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
                             reviewVector.add(reviewValues);
                         }
 
-                        if (reviewVector.size() > 0) {
+                        if (reviewVector.size() > 0)
+                        {
                             Log.e(LOG_TAG, reviewVector.size() + "");
 
                             ContentValues[] cvArray = new ContentValues[reviewVector.size()];
@@ -282,13 +307,14 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter {
 
                             int rowsCreated = getContext().getContentResolver().bulkInsert(MovieContract.ReviewEntry.CONTENT_URI, cvArray);
 
-                            Log.e(LOG_TAG, "Review Created: " + rowsCreated);
+                            Log.d(LOG_TAG, "Review Created: " + rowsCreated);
                         }
                     }
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
+                public void failure(RetrofitError error)
+                {
                     Log.d(LOG_TAG, "Error: " + error);
                 }
             });

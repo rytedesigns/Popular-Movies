@@ -10,7 +10,7 @@ import retrofit.http.Query;
 
 public interface TheMovieDatabaseService {
     @GET("/discover/movie")
-    void discoverTopMovies(@Query("api_key") String apiKey, @Query("sortby") String sortOrder, Callback<Movies> callback);
+    void discoverTopMovies(@Query("api_key") String apiKey, @Query("sort_by") String sortOrder, Callback<Movies> callback);
 
     @GET("/movie/{id}")
     void getMovie(@Path("id") int id, @Query("api_key") String apiKey, @Query("append_to_response") String appendToResponse, Callback<Movie> callback);

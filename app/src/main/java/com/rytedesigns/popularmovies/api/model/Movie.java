@@ -47,7 +47,7 @@ public class Movie {
     @SerializedName("production_countries")
     public List<ProductionCountry> productionCountries;
 
-    @SerializedName("releaseDate")
+    @SerializedName("release_date")
     public String releaseDate;
 
     @SerializedName("revenue")

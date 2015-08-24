@@ -16,9 +16,7 @@ public class MovieProvider extends ContentProvider {
 
     public static final int MOVIE = 100;
 
-    public static final int MOVIE_WITH_FAVORITE = 101;
-
-    public static final int MOVIE_WITH_ID = 102;
+    public static final int MOVIE_WITH_ID = 101;
 
     public static final int TRAILER = 200;
 
@@ -75,13 +73,16 @@ public class MovieProvider extends ContentProvider {
      * @return A {@code Cursor} instance with the data
      */
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+    {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
         Cursor cursor;
 
-        switch (mUriMatcher.match(uri)) {
-            case MOVIE: {
+        switch (mUriMatcher.match(uri))
+        {
+            case MOVIE:
+            {
                 cursor = db.query(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,
@@ -94,7 +95,8 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
-            case MOVIE_WITH_ID: {
+            case MOVIE_WITH_ID:
+            {
                 Log.d(LOG_TAG, "Querying data using the following uri " + uri);
 
                 long id = MovieContract.MovieEntry.getIdFromUri(uri);
@@ -104,7 +106,7 @@ public class MovieProvider extends ContentProvider {
                 cursor = db.query(
                         MovieContract.MovieEntry.TABLE_NAME,
                         projection,
-                        MovieContract.MovieEntry._ID + " = ?",
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
                         new String[]{Long.toString(id)},
                         null,
                         null,
@@ -113,7 +115,8 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
-            case TRAILER: {
+            case TRAILER:
+            {
                 cursor = db.query(
                         MovieContract.TrailerEntry.TABLE_NAME,
                         projection,
@@ -125,14 +128,19 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
-            case TRAILER_WITH_MOVIE_ID: {
-                long _id = MovieContract.TrailerEntry.getMovieIdFromUri(uri);
+            case TRAILER_WITH_MOVIE_ID:
+            {
+                Log.d(LOG_TAG, "Querying data using the following uri " + uri);
+
+                long id = MovieContract.TrailerEntry.getMovieIdFromUri(uri);
+
+                Log.d(LOG_TAG, "retrieved id " + id);
 
                 cursor = db.query(
                         MovieContract.TrailerEntry.TABLE_NAME,
                         projection,
                         MovieContract.TrailerEntry.COLUMN_MOVIE_ID + " = ?",
-                        new String[]{Long.toString(_id)},
+                        new String[]{Long.toString(id)},
                         null,
                         null,
                         sortOrder);
@@ -140,7 +148,8 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
-            case REVIEW: {
+            case REVIEW:
+            {
                 cursor = db.query(
                         MovieContract.ReviewEntry.TABLE_NAME,
                         projection,
@@ -152,14 +161,19 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
-            case REVIEW_WITH_MOVIE_ID: {
-                long _id = MovieContract.ReviewEntry.getMovieIdFromUri(uri);
+            case REVIEW_WITH_MOVIE_ID:
+            {
+                Log.d(LOG_TAG, "Querying data using the following uri " + uri);
+
+                long id = MovieContract.ReviewEntry.getMovieIdFromUri(uri);
+
+                Log.d(LOG_TAG, "retrieved id " + id);
 
                 cursor = db.query(
                         MovieContract.ReviewEntry.TABLE_NAME,
                         projection,
                         MovieContract.ReviewEntry.COLUMN_MOVIE_ID + " = ?",
-                        new String[]{Long.toString(_id)},
+                        new String[]{Long.toString(id)},
                         null,
                         null,
                         sortOrder);
@@ -169,10 +183,15 @@ public class MovieProvider extends ContentProvider {
 
 
             default:
+            {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
         }
 
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        cursor.moveToFirst();
+
         return cursor;
     }
 
@@ -218,43 +237,76 @@ public class MovieProvider extends ContentProvider {
      * @return A Content Uri with the ID of the inserted row
      */
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(Uri uri, ContentValues values)
+    {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-        int match = mUriMatcher.match(uri);
+
+        int uriType = mUriMatcher.match(uri);
+
         Uri insertionUri;
 
         long insertedId;
 
-        switch (match) {
+        switch (uriType)
+        {
             case MOVIE:
-                insertedId = db.insertWithOnConflict(MovieContract.MovieEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
-                if (insertedId > 0) {
-                    insertionUri = MovieContract.MovieEntry.buildMovieWithId(insertedId);
-                } else {
-                    throw new SQLException("Failed to insert row into " + uri);
-                }
-                break;
+            {
+                Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
+                        new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID},
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                        new String[]{values.get(MovieContract.MovieEntry.COLUMN_MOVIE_ID).toString()},
+                        null,
+                        null,
+                        null);
 
-            case TRAILER:
-                insertedId = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, values);
+                if (cursor.moveToFirst())
+                {
+                    insertionUri = MovieContract.MovieEntry.buildMovieWithId(cursor.getInt(0));
+
+                    db.update(MovieContract.MovieEntry.TABLE_NAME, values, MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?", new String[]{Long.toString(cursor.getInt(0))});
+                }
+                else
+                {
+                    insertedId = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, values);
+
+                    if (insertedId > 0)
+                    {
+                        insertionUri = MovieContract.MovieEntry.buildMovieWithId(insertedId);
+                    }
+                    else
+                    {
+                        throw new SQLException("Failed to insert row into " + uri);
+                    }
+                }
+
+                break;
+            }
+
+            case TRAILER: {
+                insertedId = db.insertWithOnConflict(MovieContract.TrailerEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
                 if (insertedId > 0) {
                     insertionUri = MovieContract.TrailerEntry.buildTrailerWithId(insertedId);
                 } else {
                     throw new SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            }
 
-            case REVIEW:
-                insertedId = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, values);
+            case REVIEW: {
+                insertedId = db.insertWithOnConflict(MovieContract.ReviewEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
                 if (insertedId > 0) {
                     insertionUri = MovieContract.ReviewEntry.buildTrailerWithId(insertedId);
                 } else {
                     throw new SQLException("Failed to insert row into " + uri);
                 }
                 break;
+            }
 
-            default:
+            default: {
                 throw new UnsupportedOperationException("Unknown uri " + uri);
+            }
         }
 
         getContext().getContentResolver().notifyChange(uri, null);
@@ -322,41 +374,58 @@ public class MovieProvider extends ContentProvider {
      * @return The number of updated rows
      */
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
+    {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+
         int match = mUriMatcher.match(uri);
+
         int rowsUpdated;
 
-        switch (match) {
+        switch (match)
+        {
             case MOVIE:
+            {
                 rowsUpdated = db.update(
                         MovieContract.MovieEntry.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
                 break;
+            }
 
             case TRAILER:
+            {
                 rowsUpdated = db.update(
                         MovieContract.TrailerEntry.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
+
                 break;
+            }
 
             case REVIEW:
+            {
                 rowsUpdated = db.update(
                         MovieContract.ReviewEntry.TABLE_NAME,
                         values,
                         selection,
                         selectionArgs);
+
                 break;
+            }
 
             default:
+            {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
+            }
         }
 
-        if (rowsUpdated != 0) {
+        Log.e("update", "rows update: "+ rowsUpdated);
+
+        if (rowsUpdated != 0)
+        {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
@@ -371,73 +440,22 @@ public class MovieProvider extends ContentProvider {
      * @return The number of values that were inserted.
      */
     @Override
-    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
-        Log.e(LOG_TAG, "bulkInster on " + values.length + "records");
-        SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+    public int bulkInsert(Uri uri, @NonNull ContentValues[] values)
+    {
+        int count = 0;
 
-        int matcher = mUriMatcher.match(uri);
+        for (ContentValues item : values)
+        {
+            Uri id = insert(uri, item);
 
-        switch (matcher) {
-            case MOVIE: {
-                db.beginTransaction();
-
-                int count = 0;
-
-                for (ContentValues item : values) {
-                    long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, item);
-
-                    Log.e(LOG_TAG, "ID: " + _id);
-
-                    if (_id != -1) {
-                        count++;
-                    }
-                }
-
-                db.setTransactionSuccessful();
-
-                db.endTransaction();
-
-                getContext().getContentResolver().notifyChange(uri, null);
-
-                return count;
+            if (id != null)
+            {
+                count++;
             }
-
-            case REVIEW: {
-                db.beginTransaction();
-                int count = 0;
-
-                for (ContentValues item : values) {
-                    long _id = db.insert(MovieContract.ReviewEntry.TABLE_NAME, null, item);
-                    if (_id != -1) {
-                        count++;
-                    }
-                }
-                db.setTransactionSuccessful();
-                db.endTransaction();
-
-                getContext().getContentResolver().notifyChange(uri, null);
-                return count;
-            }
-
-            case TRAILER: {
-                db.beginTransaction();
-                int count = 0;
-
-                for (ContentValues item : values) {
-                    long _id = db.insert(MovieContract.TrailerEntry.TABLE_NAME, null, item);
-                    if (_id != -1) {
-                        count++;
-                    }
-                }
-                db.setTransactionSuccessful();
-                db.endTransaction();
-
-                getContext().getContentResolver().notifyChange(uri, null);
-                return count;
-            }
-
-            default:
-                return super.bulkInsert(uri, values);
         }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return count;
     }
 }

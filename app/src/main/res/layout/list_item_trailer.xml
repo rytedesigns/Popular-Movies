@@ -5,18 +5,20 @@
     android:orientation="horizontal">
 
     <ImageView
-        android:layout_width="72dp"
-        android:layout_height="fill_parent"
-        android:scaleType="fitCenter"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="fitXY"
         android:src="@android:drawable/ic_media_play"
-        android:tint="@color/popular_movies_blue" />
+        android:tint="@color/popular_movies_blue"
+        android:layout_gravity="center_vertical" />
 
     <TextView
         android:id="@+id/trailerNameTextView"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_vertical|left" />
 
 </LinearLayout>

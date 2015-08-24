@@ -4,10 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by ryan on 8/21/2015.
- */
-public class Movies {
+public class Movies
+{
     @SerializedName("results")
     public List<Movie> movies;
+
+    @SerializedName("total_pages")
+    public int totalPages;
 }
