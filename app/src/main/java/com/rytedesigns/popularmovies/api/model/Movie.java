@@ -4,15 +4,16 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Movie {
+public class Movie
+{
     @SerializedName("adult")
-    public boolean adult = false;
+    public boolean adult;
 
     @SerializedName("backdrop_path")
     public String backdropPath;
 
     @SerializedName("budget")
-    public int budget = 150000000;
+    public int budget;
 
     @SerializedName("genres")
     public List<Genre> genres;
@@ -21,7 +22,7 @@ public class Movie {
     public String homepage;
 
     @SerializedName("id")
-    public int id = 76341;
+    public int id;
 
     @SerializedName("imdb_id")
     public String imdbId;

@@ -1,15 +1,17 @@
 <resources>
     <string name="app_name">Popular Movies</string>
 
-    <!-- Movie Details -->
+    <!-- Movies -->
     <string name="title_activity_main" translatable="false">@string/app_name</string>
 
     <!-- Movie Details -->
     <string name="title_activity_movie_details">Movie Details</string>
+    <string name="label_mark_as_favorite_button">MARK AS FAVORITE</string>
+    <string name="label_trailers_title">Trailers:</string>
+    <string name="label_reviews_title">Reviews:</string>
 
     <!-- Actions -->
     <string name="action_settings">Settings</string>
-    <string name="action_share">Share</string>
 
     <!-- settings -->
     <string name="title_activity_settings">Settings</string>
@@ -19,7 +21,7 @@
     <string name="pref_title_sort_order">Sort Order</string>
     <string name="pref_sort_order_key" translatable="false">pref_sort_order_key</string>
     <string name="pref_display_favorites_key" translatable="false">pref_display_favorites_key</string>
-    <string name="pref_sort_order_default" translatable="false">popularity.asc</string>
+    <string name="pref_sort_order_default" translatable="false">popularity.desc</string>
 
     <!-- URL -->
     <string name="base_poster_url" translatable="false">http://image.tmdb.org/t/p/w500/</string>
@@ -27,5 +29,11 @@
     <string name="youtube_url" translatable="false">https://www.youtube.com/watch?v=</string>
     <string name="content_provider_authority" translatable="false">com.rytedesigns.popularmovies.provider</string>
     <string name="sync_account_type" translatable="false">prominentmotionpictures.rytedesigns.com</string>
+
+    <!-- Content Descriptions -->
+    <string name="content_description_horizontal_line">Horizontal Line</string>
+    <string name="content_description_movie_poster">Movie Poster</string>
+    <string name="content_description_movie_favorite">Movie is your favorite</string>
+    <string name="content_description_play_trailer">Play trailer</string>
 
 </resources>

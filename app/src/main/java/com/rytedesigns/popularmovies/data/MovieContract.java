@@ -5,7 +5,8 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class MovieContract {
+public class MovieContract
+{
     public static final String CONTENT_AUTHORITY = "com.rytedesigns.popularmovies.provider";
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -19,7 +20,8 @@ public class MovieContract {
     /**
      * Inner class that defines the table contents of the movies table
      */
-    public static final class MovieEntry implements BaseColumns {
+    public static final class MovieEntry implements BaseColumns
+    {
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
 
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
@@ -66,12 +68,14 @@ public class MovieContract {
          * @param uri The Uri of the record
          * @return The Id of the record or -1 if this doesn't apply
          */
-        public static long getIdFromUri(Uri uri) {
+        public static long getIdFromUri(Uri uri)
+        {
             return ContentUris.parseId(uri);
         }
     }
 
-    public static final class TrailerEntry implements BaseColumns {
+    public static final class TrailerEntry implements BaseColumns
+    {
         // Content URI for the TrailerEntry
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILER).build();
 
@@ -100,7 +104,8 @@ public class MovieContract {
          * @param uri The trailer's URI with the movie ID
          * @return The movie ID or -1 if doesn't exist
          */
-        public static long getMovieIdFromUri(Uri uri) {
+        public static long getMovieIdFromUri(Uri uri)
+        {
             return ContentUris.parseId(uri);
         }
 
@@ -142,7 +147,8 @@ public class MovieContract {
          * @param uri The Uri of the review with the movie id appended
          * @return The ID of the movie, or -1 if doesn't exist
          */
-        public static long getMovieIdFromUri(Uri uri) {
+        public static long getMovieIdFromUri(Uri uri)
+        {
             return ContentUris.parseId(uri);
         }
 
@@ -152,7 +158,8 @@ public class MovieContract {
          * @param insertedId The ID of the movie
          * @return The uri of the review
          */
-        public static Uri buildTrailerWithId(long insertedId) {
+        public static Uri buildTrailerWithId(long insertedId)
+        {
             return ContentUris.withAppendedId(CONTENT_URI, insertedId);
         }
     }

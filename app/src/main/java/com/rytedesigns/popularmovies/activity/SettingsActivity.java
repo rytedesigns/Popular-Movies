@@ -2,17 +2,14 @@ package com.rytedesigns.popularmovies.activity;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.rytedesigns.popularmovies.R;
-import com.rytedesigns.popularmovies.Utility;
 
 
 /**
@@ -73,12 +70,13 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
     @Override
     public Intent getParentActivityIntent()
     {
-        Intent partentIntent = super.getParentActivityIntent();
+        Intent parentIntent = super.getParentActivityIntent();
 
-        if (partentIntent != null) {
-            partentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (parentIntent != null)
+        {
+            parentIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-            return partentIntent;
+            return parentIntent;
         }
 
         return null;

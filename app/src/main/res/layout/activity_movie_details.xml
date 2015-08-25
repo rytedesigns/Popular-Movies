@@ -4,5 +4,5 @@
     android:name="com.rytedesigns.popularmovies.fragment.MovieDetailsFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout="@layout/fragment_movie_details"
-    tools:ignore="MergeRootFrame"/>
+    tools:ignore="MergeRootFrame"
+    tools:layout="@layout/fragment_movie_details" />

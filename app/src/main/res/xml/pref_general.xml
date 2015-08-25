@@ -8,7 +8,7 @@
         android:title="@string/pref_title_display_favorites" />
 
     <ListPreference
-        android:defaultValue="-1"
+        android:defaultValue="@string/pref_sort_order_default"
         android:entries="@array/pref_sort_order_titles"
         android:entryValues="@array/pref_sort_order_values"
         android:key="@string/pref_sort_order_key"

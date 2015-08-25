@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.rytedesigns.popularmovies.R;
 import com.rytedesigns.popularmovies.fragment.MainFragment;
@@ -61,6 +62,8 @@ public class MovieImageAdapter extends CursorAdapter
 
             int movieId = cursor.getInt(MainFragment.COL_MOVIE_ID);
 
+            String movieTitle = cursor.getString(MainFragment.COL_TITLE);
+
             Log.d(LOG_TAG, "Movie ID: " + movieId);
 
             if (cursor.getInt(MainFragment.COL_FAVORITE) == 1)
@@ -82,6 +85,10 @@ public class MovieImageAdapter extends CursorAdapter
                         .load(baseImageUrl + posterPath)
                         .placeholder(R.drawable.movie_poster_placeholder)
                         .into(viewHolder.moviePosterImageView);
+
+                viewHolder.movieTitleTextView.setText(movieTitle);
+
+                viewHolder.movieTitleTextView.setVisibility(View.GONE);
             }
             else
             {
@@ -89,6 +96,10 @@ public class MovieImageAdapter extends CursorAdapter
                         .load(R.drawable.movie_poster_placeholder)
                         .placeholder(R.drawable.movie_poster_placeholder)
                         .into(viewHolder.moviePosterImageView);
+
+                viewHolder.movieTitleTextView.setText(movieTitle);
+
+                viewHolder.movieTitleTextView.setVisibility(View.VISIBLE);
             }
         }
         else
@@ -110,6 +121,9 @@ public class MovieImageAdapter extends CursorAdapter
 
         @InjectView(R.id.favoriteImageView)
         public ImageView favoriteImageView;
+
+        @InjectView(R.id.movieTitleTextView)
+        public TextView movieTitleTextView;
 
         public ViewHolder(View view)
         {

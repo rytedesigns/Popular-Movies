@@ -1,10 +1,8 @@
 package com.rytedesigns.popularmovies.fragment;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -15,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
 
 import com.rytedesigns.popularmovies.R;
 import com.rytedesigns.popularmovies.Utility;
@@ -30,13 +27,9 @@ import butterknife.OnItemClick;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    public static final String LOG_TAG = MainFragment.class.getSimpleName();
-
-    @InjectView(R.id.movieGridView)
-    public GridView mMovieGridView;
-
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
+{
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
 
     public static final int COL_MOVIE_ID = 0;
 
@@ -57,22 +50,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private static final int MOVIES_LOADER = 0;
 
+    @InjectView(R.id.movieGridView)
+    public GridView mMovieGridView;
+
     private int mPosition = GridView.INVALID_POSITION;
 
     private MovieImageAdapter mMovieImageAdapter;
-
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
-    public interface Callbacks
-    {
-        /**
-         * Callback for when an item has been selected.
-         */
-        void onItemSelected(Uri contentUri);
-    }
 
     public MainFragment()
     {
@@ -112,7 +95,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
         Log.e(LOG_TAG, "MADE IT HERE IN onActivityCreated");
 
         getLoaderManager().initLoader(MOVIES_LOADER, null, this);
@@ -131,27 +115,24 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private void updateMovies()
     {
         MovieSyncAdapter.syncImmediately(getActivity());
-        MovieSyncAdapter.syncImmediately(getActivity());
-        MovieSyncAdapter.syncImmediately(getActivity());
-        MovieSyncAdapter.syncImmediately(getActivity());
-        MovieSyncAdapter.syncImmediately(getActivity());
-        MovieSyncAdapter.syncImmediately(getActivity());
-        MovieSyncAdapter.syncImmediately(getActivity());
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState)
+    {
         // When tablets rotate, the currently selected list item needs to be saved.
         // When no item is selected, mPosition will be set to Listview.INVALID_POSITION,
         // so check for that before storing.
-        if (mPosition != GridView.INVALID_POSITION) {
+        if (mPosition != GridView.INVALID_POSITION)
+        {
             outState.putInt(SELECTED_KEY, mPosition);
         }
         super.onSaveInstanceState(outState);
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
+    {
         // Sort order:
         String sortOrder = Utility.getPreferredSortOrder(getActivity()).replace(".", " ");
 
@@ -159,7 +140,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         String[] filterArgs = null;
 
-        if (Utility.getPreferredDisplayFavorites(getActivity())) {
+        if (Utility.getPreferredDisplayFavorites(getActivity()))
+        {
             filter = MovieEntry.COLUMN_FAVORITE + " = ?";
 
             filterArgs = new String[]{Integer.toString(1)};
@@ -170,11 +152,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Log.d(LOG_TAG, "onCreateLoader. Now starting to load data from CursorLoader");
 
         return new CursorLoader(getActivity(),
-                movieUri,
-                MOVIE_COLUMNS,
-                filter,
-                filterArgs,
-                sortOrder);
+                                movieUri,
+                                MOVIE_COLUMNS,
+                                filter,
+                                filterArgs,
+                                sortOrder);
     }
 
     @Override
@@ -192,29 +174,55 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         {
             mPosition = GridView.SCROLLBAR_POSITION_DEFAULT;
 
-            mMovieGridView.smoothScrollToPosition(mPosition);
+            mMovieGridView.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    mMovieGridView.performItemClick(
+                            mMovieGridView.getAdapter().getView(mPosition, null, null),
+                            mPosition,
+                            mMovieGridView.getAdapter().getItemId(mPosition));
+                }
+            });
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
         Log.d(LOG_TAG, "Loader Reset.");
 
         mMovieImageAdapter.swapCursor(null);
     }
 
     @OnItemClick(R.id.movieGridView)
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+    public void onItemClick(int position)
+    {
         Log.e(LOG_TAG, "MADE IT HERE IN onItemClick");
         // CursorAdapter returns a cursor at the correct position for getItem(), or null
         // if it cannot seek to that position.
-        Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+        Cursor cursor = (Cursor) mMovieImageAdapter.getItem(position);
 
-        if (cursor != null) {
+        if (cursor != null)
+        {
             ((Callbacks) getActivity())
                     .onItemSelected(MovieEntry.buildMovieWithId(cursor.getLong(COL_MOVIE_ID)));
         }
 
         mPosition = position;
+    }
+
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks
+    {
+        /**
+         * Callback for when an item has been selected.
+         */
+        void onItemSelected(Uri contentUri);
     }
 }

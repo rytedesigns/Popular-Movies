@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,7 +26,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     private boolean mShowFavorites;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -36,7 +36,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
         mShowFavorites = Utility.getPreferredDisplayFavorites(this);
 
-        if (findViewById(R.id.movie_details_container) != null) {
+        if (findViewById(R.id.movie_details_container) != null)
+        {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
@@ -45,7 +46,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
-            if (savedInstanceState == null) {
+            if (savedInstanceState == null)
+            {
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.movie_details_container, new MovieDetailsFragment(), MOVIE_DETAIL_FRAGMENT_TAG)
                         .commit();
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
         // update the location in our second pane using the fragment manager
         if ((sortOrder != null && !sortOrder.equals(mSortOrder)) || showFavorites != mShowFavorites)
         {
-            MainFragment discoverMovieFragment = (MainFragment) getSupportFragmentManager() .findFragmentById(R.id.fragment_movies);
+            MainFragment discoverMovieFragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_movies);
 
             if (null != discoverMovieFragment)
             {

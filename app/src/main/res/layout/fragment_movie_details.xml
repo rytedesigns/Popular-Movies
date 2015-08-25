@@ -7,32 +7,27 @@
 
     <TextView
         android:id="@+id/titleTextView"
+        style="@style/MovieTitleTextView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/popular_movies_light_blue"
-        android:paddingBottom="32dp"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="32dp"
-        android:layout_marginBottom="16dp"
-        android:textColor="@android:color/white"
-        android:textSize="40sp" />
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/movie_details_horizontal_margin"
+            android:paddingRight="@dimen/movie_details_horizontal_margin"
+            android:paddingTop="@dimen/movie_details_vertical_margin">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
                 android:baselineAligned="false"
                 android:orientation="horizontal">
 
@@ -49,6 +44,7 @@
                         android:layout_centerHorizontal="true"
                         android:adjustViewBounds="true"
                         android:scaleType="fitXY"
+                        android:contentDescription="@string/content_description_movie_poster"
                         android:src="@drawable/movie_poster_placeholder" />
 
                     <ImageView
@@ -58,6 +54,7 @@
                         android:layout_alignBottom="@id/posterImageView"
                         android:layout_alignRight="@id/posterImageView"
                         android:src="@android:drawable/btn_star_big_on"
+                        android:contentDescription="@string/content_description_movie_favorite"
                         android:visibility="gone" />
 
                 </RelativeLayout>
@@ -71,34 +68,25 @@
 
                     <TextView
                         android:id="@+id/releaseDateTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
+                        style="@style/PopularMovieTextView"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/runtimeTimeView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        style="@style/PopularMovieTextView"
                         android:textStyle="bold|italic" />
 
                     <TextView
                         android:id="@+id/ratingTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
+                        style="@style/PopularMovieTextView"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textStyle="bold" />
 
                     <Button
                         android:id="@+id/favoriteMovieButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:text="MARK AS FAVORITE"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        style="@style/PopularMovieButton"
+                        android:text="@string/label_mark_as_favorite_button" />
 
                 </LinearLayout>
 
@@ -106,54 +94,62 @@
 
             <TextView
                 android:id="@+id/overviewTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                style="@style/PopularMovieTextView"
+                android:layout_weight="1" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
+                android:layout_weight="1"
                 android:scaleType="fitXY"
-                android:src="@drawable/movie_poster_placeholder" />
+                android:src="@drawable/movie_poster_placeholder"
+                android:contentDescription="@string/content_description_horizontal_line" />
 
             <TextView
                 android:id="@+id/trailerLabelTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Trailers:"
+                style="@style/PopularMovieTextView"
+                android:layout_weight="1"
+                android:text="@string/label_trailers_title"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <ListView
                 android:id="@+id/trailerListView"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:divider="@drawable/abc_list_divider_mtrl_alpha"
                 android:headerDividersEnabled="false"
-                tools:listitem="@layout/list_item_trailer"
-                android:divider="@drawable/abc_list_divider_mtrl_alpha" />
+                android:overScrollHeader="@color/abc_search_url_text_pressed"
+                tools:listitem="@layout/list_item_trailer" />
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/content_description_horizontal_line"
                 android:scaleType="fitXY"
                 android:src="@drawable/movie_poster_placeholder" />
 
             <TextView
                 android:id="@+id/reviewLabelTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Reviews:"
+                style="@style/PopularMovieTextView"
+                android:layout_weight="1"
+                android:text="@string/label_reviews_title"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <ListView
                 android:id="@+id/reviewListView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
-                android:headerDividersEnabled="false"
-                tools:listitem="@layout/list_item_review"
+                android:layout_weight="1"
                 android:choiceMode="singleChoice"
-                android:divider="@drawable/abc_list_divider_mtrl_alpha" />
+                android:divider="@drawable/abc_list_divider_mtrl_alpha"
+                tools:listitem="@layout/list_item_review" />
+
         </LinearLayout>
+
     </ScrollView>
+
 </LinearLayout>

@@ -33,9 +33,8 @@ import retrofit.client.Response;
 public class MovieSyncAdapter extends AbstractThreadedSyncAdapter
 {
     // time in seconds when to sync
-    private static final int HOUR_IN_SECONDS = 60;
-    public static final int SYNC_INTERVAL = HOUR_IN_SECONDS * 12;
-    private static final long DAY_IN_MILLIS = 1000 * HOUR_IN_SECONDS * 24;
+    private static final int HOUR_IN_SECONDS = 3600;
+    private static final int SYNC_INTERVAL = HOUR_IN_SECONDS * 12;
     private static final String LOG_TAG = MovieSyncAdapter.class.getSimpleName();
     private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
@@ -47,11 +46,12 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter
     /**
      * Helper method to schedule the sync adapter periodic execution
      */
-    public static void configurePeriodicSync(Context context, int syncInterval, int flexTime)
+    private static void configurePeriodicSync(Context context, int syncInterval, int flexTime)
     {
         Log.d(LOG_TAG, "configurePeriodicSync");
 
         Account account = getSyncAccount(context);
+
         String authority = context.getString(R.string.content_provider_authority);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -97,7 +97,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter
      * @param context The context used to access the account service
      * @return a fake account.
      */
-    public static Account getSyncAccount(Context context)
+    private static Account getSyncAccount(Context context)
     {
         Log.d(LOG_TAG, "getSyncAccount");
 
@@ -175,14 +175,12 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter
 
         TheMovieDatabaseService movieService = restAdapter.create(TheMovieDatabaseService.class);
 
-        Log.e("TEST", "onPreformSync Sort Order: " + sortOrder);
-
         movieService.discoverTopMovies(getContext().getString(R.string.api_key), sortOrder, new Callback<Movies>()
         {
             @Override
             public void success(Movies movies, Response response)
             {
-                Log.e("TEST", "onPreformSync Movie Size: " + movies.movies.size());
+                Log.d(LOG_TAG, "onPreformSync Movie Size: " + movies.movies.size());
 
                 getMovieData(movies.movies);
             }

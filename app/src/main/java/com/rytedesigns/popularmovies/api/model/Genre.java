@@ -2,7 +2,8 @@ package com.rytedesigns.popularmovies.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Genre {
+public class Genre
+{
     @SerializedName("id")
     public int id;
 

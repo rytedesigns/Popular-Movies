@@ -2,7 +2,8 @@ package com.rytedesigns.popularmovies.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Review {
+public class Review
+{
     @SerializedName("id")
     public String id;
 

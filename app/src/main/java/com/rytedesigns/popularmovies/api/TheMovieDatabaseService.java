@@ -8,7 +8,8 @@ import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
-public interface TheMovieDatabaseService {
+public interface TheMovieDatabaseService
+{
     @GET("/discover/movie")
     void discoverTopMovies(@Query("api_key") String apiKey, @Query("sort_by") String sortOrder, Callback<Movies> callback);
 

@@ -11,7 +11,7 @@
     </style>
 
     <!-- Settings activity theme. -->
-    <style name="SettingsTheme" parent="AppTheme"></style>
+    <style name="SettingsTheme" parent="AppTheme"/>
 
     <!-- main activity action bar styles -->
     <style name="ActionBar.Solid.ProminentMotionPictures.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
@@ -19,7 +19,41 @@
         <item name="logo">@mipmap/ic_launcher</item>
     </style>
 
-    <!-- Style for movie gridveview -->
-    <style name="MoviesGridStyle"></style>
+    <!-- Style for movie grid view -->
+    <style name="PopularMovieGridViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">fill</item>
+        <item name="android:horizontalSpacing">0dp</item>
+        <item name="android:listSelector">@drawable/grid_item_selector</item>
+        <item name="android:numColumns">auto_fit</item>
+        <item name="android:stretchMode">columnWidth</item>
+        <item name="android:verticalSpacing">0dp</item>
+    </style>
+
+    <style name="PopularMovieButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="PopularMovieTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceMedium</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="MovieTitleTextView" parent="PopularMovieTextView">
+        <item name="android:background">@color/popular_movies_light_blue</item>
+        <item name="android:paddingBottom">@dimen/movie_title_vertical_padding</item>
+        <item name="android:paddingLeft">@dimen/movie_title_horizontal_padding</item>
+        <item name="android:paddingRight">@dimen/movie_title_horizontal_padding</item>
+        <item name="android:paddingTop">@dimen/movie_title_vertical_padding</item>
+        <item name="android:layout_margin">@dimen/movie_title_margin</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">32sp</item>
+    </style>
 
 </resources>

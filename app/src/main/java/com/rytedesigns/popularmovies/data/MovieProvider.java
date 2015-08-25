@@ -11,9 +11,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-public class MovieProvider extends ContentProvider {
-    public static final String LOG_TAG = MovieProvider.class.getSimpleName();
-
+public class MovieProvider extends ContentProvider
+{
     public static final int MOVIE = 100;
 
     public static final int MOVIE_WITH_ID = 101;
@@ -26,6 +25,8 @@ public class MovieProvider extends ContentProvider {
 
     public static final int REVIEW_WITH_MOVIE_ID = 301;
 
+    private static final String LOG_TAG = MovieProvider.class.getSimpleName();
+
     private static final UriMatcher mUriMatcher = createUriMatcher();
 
     private SQLiteOpenHelper mOpenHelper;
@@ -35,7 +36,8 @@ public class MovieProvider extends ContentProvider {
      *
      * @return A {@code UriMatcher} instance
      */
-    public static UriMatcher createUriMatcher() {
+    public static UriMatcher createUriMatcher()
+    {
         UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         String authority = MovieContract.CONTENT_AUTHORITY;
@@ -56,7 +58,8 @@ public class MovieProvider extends ContentProvider {
     }
 
     @Override
-    public boolean onCreate() {
+    public boolean onCreate()
+    {
         mOpenHelper = new MovieDbHelper(getContext());
 
         return true;
@@ -188,7 +191,10 @@ public class MovieProvider extends ContentProvider {
             }
         }
 
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (getContext() != null)
+        {
+            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }
 
         cursor.moveToFirst();
 
@@ -202,10 +208,12 @@ public class MovieProvider extends ContentProvider {
      * @return The type data pointed by the uri
      */
     @Override
-    public String getType(Uri uri) {
+    public String getType(@NonNull Uri uri)
+    {
         int match = mUriMatcher.match(uri);
 
-        switch (match) {
+        switch (match)
+        {
             case MOVIE:
                 return MovieContract.MovieEntry.CONTENT_TYPE;
 
@@ -237,7 +245,7 @@ public class MovieProvider extends ContentProvider {
      * @return A Content Uri with the ID of the inserted row
      */
     @Override
-    public Uri insert(Uri uri, ContentValues values)
+    public Uri insert(@NonNull Uri uri, ContentValues values)
     {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
@@ -252,12 +260,12 @@ public class MovieProvider extends ContentProvider {
             case MOVIE:
             {
                 Cursor cursor = db.query(MovieContract.MovieEntry.TABLE_NAME,
-                        new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID},
-                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
-                        new String[]{values.get(MovieContract.MovieEntry.COLUMN_MOVIE_ID).toString()},
-                        null,
-                        null,
-                        null);
+                                         new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID},
+                                         MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                                         new String[]{values.get(MovieContract.MovieEntry.COLUMN_MOVIE_ID).toString()},
+                                         null,
+                                         null,
+                                         null);
 
                 if (cursor.moveToFirst())
                 {
@@ -282,34 +290,46 @@ public class MovieProvider extends ContentProvider {
                 break;
             }
 
-            case TRAILER: {
+            case TRAILER:
+            {
                 insertedId = db.insertWithOnConflict(MovieContract.TrailerEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
-                if (insertedId > 0) {
+                if (insertedId > 0)
+                {
                     insertionUri = MovieContract.TrailerEntry.buildTrailerWithId(insertedId);
-                } else {
+                }
+                else
+                {
                     throw new SQLException("Failed to insert row into " + uri);
                 }
                 break;
             }
 
-            case REVIEW: {
+            case REVIEW:
+            {
                 insertedId = db.insertWithOnConflict(MovieContract.ReviewEntry.TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
-                if (insertedId > 0) {
+                if (insertedId > 0)
+                {
                     insertionUri = MovieContract.ReviewEntry.buildTrailerWithId(insertedId);
-                } else {
+                }
+                else
+                {
                     throw new SQLException("Failed to insert row into " + uri);
                 }
                 break;
             }
 
-            default: {
+            default:
+            {
                 throw new UnsupportedOperationException("Unknown uri " + uri);
             }
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (getContext() != null)
+        {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
 
         return insertionUri;
     }
@@ -326,17 +346,20 @@ public class MovieProvider extends ContentProvider {
      * @return The number of deleted rows
      */
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs)
+    {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         int match = mUriMatcher.match(uri);
         int rowsDeleted;
 
         //delete all rows and return the number of records deleted
-        if (selection == null) {
+        if (selection == null)
+        {
             selection = "1";
         }
 
-        switch (match) {
+        switch (match)
+        {
             case MOVIE:
                 rowsDeleted = db.delete(MovieContract.MovieEntry.TABLE_NAME, selection, selectionArgs);
                 break;
@@ -353,7 +376,8 @@ public class MovieProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
 
-        if (rowsDeleted != 0) {
+        if (rowsDeleted != 0 && getContext() != null)
+        {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
@@ -374,7 +398,7 @@ public class MovieProvider extends ContentProvider {
      * @return The number of updated rows
      */
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs)
     {
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 
@@ -422,9 +446,9 @@ public class MovieProvider extends ContentProvider {
             }
         }
 
-        Log.e("update", "rows update: "+ rowsUpdated);
+        Log.e("update", "rows update: " + rowsUpdated);
 
-        if (rowsUpdated != 0)
+        if (rowsUpdated != 0 && getContext() != null)
         {
             getContext().getContentResolver().notifyChange(uri, null);
         }
@@ -440,7 +464,7 @@ public class MovieProvider extends ContentProvider {
      * @return The number of values that were inserted.
      */
     @Override
-    public int bulkInsert(Uri uri, @NonNull ContentValues[] values)
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values)
     {
         int count = 0;
 
@@ -454,7 +478,10 @@ public class MovieProvider extends ContentProvider {
             }
         }
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        if (getContext() != null)
+        {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
 
         return count;
     }

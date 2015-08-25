@@ -10,13 +10,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,6 +39,7 @@ import butterknife.OnItemClick;
 public class MovieDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
 {
     public static final String MOVIE_URI_KEY = "movie_uri_key";
+
     // These indices are tied to MOVIE_DETAIL_COLUMNS.  If MOVIE_DETAIL_COLUMNS changes, these must change.
     public static final int MOVIE_COL_ID = 0;
     public static final int MOVIE_COL_MOVIE_ID = 1;
@@ -71,7 +67,6 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     public static final int REVIEW_COL_REVIEW_ID = 4;
     public static final int REVIEW_COL_REVIEW_URL = 5;
     private static final String LOG_TAG = MovieDetailsFragment.class.getSimpleName();
-    private static final String TRAILER_SHARE_HASHTAG = " #PopularMovie";
     private static final int MOVIE_DETAIL_LOADER = 1;
     private static final int TRAILER_LOADER = 2;
     private static final int REVIEW_LOADER = 3;
@@ -122,7 +117,7 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
 
     @InjectView(R.id.ratingTextView)
     public TextView mRatingTextView;
-    
+
     @InjectView(R.id.favoriteImageView)
     public ImageView mFavoriteImageView;
 
@@ -134,8 +129,6 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
 
     @InjectView(R.id.reviewListView)
     public ListView mReviewListView;
-
-    private ShareActionProvider mShareActionProvider;
 
     private TrailerArrayAdapter mTrailerAdapter;
 
@@ -165,14 +158,10 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        Log.e("TEST METHODS", "onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)");
-
         Bundle arguments = getArguments();
 
         if (arguments != null)
         {
-            Log.e("TEST", "URI: " + arguments.getParcelable(MovieDetailsFragment.MOVIE_URI_KEY));
-
             mUri = arguments.getParcelable(MovieDetailsFragment.MOVIE_URI_KEY);
         }
 
@@ -194,67 +183,8 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
-        Log.e("TEST METHODS", "onCreateOptionsMenu(Menu menu, MenuInflater inflater)");
-
-        // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_movie_details, menu);
-
-        // Retrieve the share menu item
-        MenuItem menuItem = menu.findItem(R.id.action_share);
-
-        // Get the provider and hold onto it to set/change the share intent.
-        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
-
-        Log.e("TEST METHODS - 1", "mShareActionProvider is " + (mShareActionProvider != null ? "not null" : "null"));
-
-        mShareActionProvider = new ShareActionProvider(getActivity());
-
-        // If onLoadFinished happens before this, we can go ahead and set the share intent now.
-        if (movieId > 0)
-        {
-            Log.e("TEST METHODS - 1", "movieId > -1 = true");
-
-            mShareActionProvider.setShareIntent(createShareMovieIntent());
-
-            MenuItemCompat.setActionProvider(menuItem, mShareActionProvider);
-        }
-    }
-
-    private Intent createShareMovieIntent()
-    {
-        Log.e("TEST METHODS", "createShareMovieIntent()");
-
-        Log.e("TEST", "createShareMovieIntent: " + mUri);
-
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-
-        shareIntent.setType("text/plain");
-
-        if (mTrailerAdapter != null && mTrailerAdapter.getCursor() != null)
-        {
-            String youtubeId = ((Cursor) mTrailerAdapter.getItem(0)).getString(TRAILER_COL_SOURCE_ID);
-
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.youtube_url) + youtubeId + "\n" + TRAILER_SHARE_HASHTAG);
-
-            Log.e("TEST", "Share Intent Text: " + getString(R.string.youtube_url) + youtubeId + "\n" + TRAILER_SHARE_HASHTAG);
-
-            Log.e("TEST", "createShareMovieIntent: " + shareIntent.getStringExtra(Intent.EXTRA_TEXT));
-
-            return shareIntent;
-        }
-
-        return null;
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
-        Log.e("TEST METHODS", "onActivityCreated(Bundle savedInstanceState)");
-
-        Log.e("TEST", "onActivityCreated:" + mUri);
-
         getLoaderManager().initLoader(MOVIE_DETAIL_LOADER, null, this);
 
         super.onActivityCreated(savedInstanceState);
@@ -263,10 +193,6 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args)
     {
-        Log.e("TEST METHODS", "onCreateLoader(int id, Bundle args)");
-
-        Log.e("TEST", " mUri: " + mUri);
-
         CursorLoader cursorLoader = null;
 
         if (null != mUri)
@@ -275,7 +201,8 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
             {
                 case MOVIE_DETAIL_LOADER:
                 {
-                    Log.e(LOG_TAG, "Creating Loader for movie detail loader using uri " + mUri);
+                    Log.d(LOG_TAG, "Creating Loader for review loader using uri " + mUri);
+
                     // Now create and return a CursorLoader that will take care of
                     // creating a Cursor for the data being displayed.
                     cursorLoader = new CursorLoader(
@@ -296,7 +223,7 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
                     {
                         Uri trailerUri = TrailerEntry.buildTrailerWithId(movieId);
 
-                        Log.e("TEST", "Creating Loader for trailer loader using uri " + trailerUri);
+                        Log.d(LOG_TAG, "Creating Loader for review loader using uri " + trailerUri);
 
                         // Now create and return a CursorLoader that will take care of
                         // creating a Cursor for the data being displayed.
@@ -317,9 +244,9 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
                 {
                     if (movieId != -1)
                     {
-                        Uri reviewUri = ReviewEntry.buildTrailerWithId(movieId);;
+                        Uri reviewUri = ReviewEntry.buildTrailerWithId(movieId);
 
-                        Log.e("TEST", "Creating Loader for review loader using uri " + reviewUri);
+                        Log.d(LOG_TAG, "Creating Loader for review loader using uri " + reviewUri);
 
                         // Now create and return a CursorLoader that will take care of
                         // creating a Cursor for the data being displayed.
@@ -338,7 +265,7 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
 
                 default:
                 {
-                    Log.e("TEST", "Unable to create Loader using uri: " + mUri);
+                    Log.d(LOG_TAG, "Unable to create Loader using uri: " + mUri);
 
                     break;
                 }
@@ -351,41 +278,35 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data)
     {
-        Log.e("TEST METHODS", "onLoadFinished(Loader<Cursor> loader, Cursor data)");
-
-        Log.e(LOG_TAG, "Checking returned cursor. Cursor size is " + data.getCount());
+        Log.d(LOG_TAG, "Checking returned cursor. Cursor size is " + data.getCount());
 
         switch (loader.getId())
         {
             case MOVIE_DETAIL_LOADER:
             {
-                Log.e(LOG_TAG, "MOVIE_DETAIL_LOADER will be handled");
+                Log.d(LOG_TAG, "MOVIE_DETAIL_LOADER will be handled");
 
-                Log.e("TEST", "data: " + data.getCount());
-
-                handleMovieLoader(loader, data);
+                handleMovieLoader(data);
 
                 break;
             }
 
-            case TRAILER_LOADER: {
+            case TRAILER_LOADER:
+            {
 
-                Log.e(LOG_TAG, "Trailer_Loader will be handled");
+                Log.d(LOG_TAG, "Trailer_Loader will be handled");
 
-                Log.e("TEST", "data: " + data.getCount());
-
-                handleTrailerLoader(loader, data);
+                handleTrailerLoader(data);
 
                 break;
             }
 
-            case REVIEW_LOADER: {
+            case REVIEW_LOADER:
+            {
 
-                Log.e(LOG_TAG, "REVIEW_LOADER will be handled");
+                Log.d(LOG_TAG, "REVIEW_LOADER will be handled");
 
-                Log.e("TEST", "data: " + data.getCount());
-
-                handleReviewLoader(loader, data);
+                handleReviewLoader(data);
 
                 break;
             }
@@ -393,18 +314,21 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        Log.e("TEST METHODS", "onLoaderReset(Loader<Cursor> loader)");
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
         Log.d(LOG_TAG, "Loader Reset.");
 
-        switch (loader.getId()) {
-            case TRAILER_LOADER: {
+        switch (loader.getId())
+        {
+            case TRAILER_LOADER:
+            {
                 mTrailerAdapter.swapCursor(null);
 
                 break;
             }
 
-            case REVIEW_LOADER: {
+            case REVIEW_LOADER:
+            {
                 mReviewAdapter.swapCursor(null);
 
                 break;
@@ -412,7 +336,7 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
         }
     }
 
-    private void handleMovieLoader(Loader<Cursor> loader, Cursor data)
+    private void handleMovieLoader(Cursor data)
     {
         if (data.moveToFirst())
         {
@@ -421,7 +345,8 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
 
             movieId = data.getInt(MOVIE_COL_MOVIE_ID);
 
-            if (null != posterPath && mPosterImageView != null) {
+            if (null != posterPath && mPosterImageView != null)
+            {
                 Picasso.with(getActivity())
                         .load(posterPath)
                         .placeholder(R.drawable.movie_poster_placeholder)
@@ -448,22 +373,17 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
 
             // Get the Reviews for this movie
             getLoaderManager().initLoader(REVIEW_LOADER, null, this);
-
-            // If onCreateOptionsMenu has already happened, we need to update the share intent now.
-            if (mShareActionProvider != null)
-            {
-                mShareActionProvider.setShareIntent(createShareMovieIntent());
-            }
         }
     }
 
-    private void handleTrailerLoader(Loader<Cursor> loader, Cursor data)
+    private void handleTrailerLoader(Cursor data)
     {
         Log.d(LOG_TAG, "handleTrailerLoader");
 
         if (data.moveToFirst())
         {
-            do {
+            do
+            {
                 StringBuilder row = new StringBuilder();
 
                 for (String columnName : data.getColumnNames())
@@ -490,13 +410,14 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
         mTrailerAdapter.swapCursor(data);
     }
 
-    private void handleReviewLoader(Loader<Cursor> loader, Cursor data)
+    private void handleReviewLoader(Cursor data)
     {
         Log.d(LOG_TAG, "handleReviewLoader");
 
         if (data.moveToFirst())
         {
-            do {
+            do
+            {
                 StringBuilder row = new StringBuilder();
 
                 for (String columnName : data.getColumnNames())
@@ -526,7 +447,6 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     @OnClick(R.id.favoriteMovieButton)
     public void onClick(View view)
     {
-        Log.e("TEST METHODS", "onClick(View view)");
         if (movieId != -1)
         {
             if (!isFavorite)
@@ -557,7 +477,6 @@ public class MovieDetailsFragment extends Fragment implements LoaderManager.Load
     @OnItemClick(R.id.trailerListView)
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        Log.e("TEST METHODS", "onItemClick(AdapterView<?> parent, View view, int position, long id)");
         String youtubeId = ((Cursor) mTrailerAdapter.getItem(position)).getString(TRAILER_COL_SOURCE_ID);
 
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.youtube_url) + youtubeId));

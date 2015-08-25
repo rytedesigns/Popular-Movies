@@ -45,16 +45,19 @@ public class ReviewArrayAdapter extends CursorAdapter
 
         Log.d(LOG_TAG, "cursor size: " + cursor.getCount());
 
-        if (cursor.getCount() > 0) {
+        if (cursor.getCount() > 0)
+        {
             String reviewAuthor = cursor.getString(MovieDetailsFragment.REVIEW_COL_REVIEW_AUTHOR);
 
             String reviewContent = cursor.getString(MovieDetailsFragment.REVIEW_COL_REVIEW_CONTENT);
 
-            if (reviewAuthor != null) {
+            if (reviewAuthor != null)
+            {
                 viewHolder.mReviewAuthorTextView.setText(reviewAuthor);
             }
 
-            if (reviewContent != null) {
+            if (reviewContent != null)
+            {
                 viewHolder.mReviewContentTextView.setText(reviewContent);
             }
         }
@@ -63,14 +66,16 @@ public class ReviewArrayAdapter extends CursorAdapter
     /**
      * Cache the poster for the grid.
      */
-    public static class ViewHolder {
+    public static class ViewHolder
+    {
         @InjectView(R.id.reviewAuthorTextView)
         public TextView mReviewAuthorTextView;
 
         @InjectView(R.id.reviewContentTextView)
         public TextView mReviewContentTextView;
 
-        public ViewHolder(View view) {
+        public ViewHolder(View view)
+        {
             ButterKnife.inject(this, view);
         }
     }

@@ -6,14 +6,11 @@
 
     <TextView
         android:id="@+id/reviewAuthorTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        style="@style/PopularMovieTextView" />
 
     <TextView
         android:id="@+id/reviewContentTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        style="@style/PopularMovieTextView"
+        android:layout_weight="1" />
+
 </LinearLayout>

@@ -2,7 +2,8 @@ package com.rytedesigns.popularmovies.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class YouTubeTrailer {
+public class YouTubeTrailer
+{
     @SerializedName("name")
     public String trailerName;
 

@@ -7,18 +7,17 @@
     <ImageView
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/content_description_play_trailer"
         android:scaleType="fitXY"
         android:src="@android:drawable/ic_media_play"
-        android:tint="@color/popular_movies_blue"
-        android:layout_gravity="center_vertical" />
+        android:tint="@color/popular_movies_blue" />
 
     <TextView
         android:id="@+id/trailerNameTextView"
+        style="@style/PopularMovieTextView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_gravity="center_vertical|left" />
+        android:layout_gravity="center_vertical|start"
+        android:layout_weight="1" />
 
 </LinearLayout>

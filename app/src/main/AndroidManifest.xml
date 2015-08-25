@@ -44,7 +44,7 @@
             android:name=".data.MovieProvider"
             android:authorities="com.rytedesigns.popularmovies.provider"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="true"/>
 
 
         <!-- SyncAdapter's dummy authentication service -->
