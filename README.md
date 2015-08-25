@@ -3,6 +3,6 @@ Udacity NanoDegree project.
 
 /* WORK IN PROGRESS */
 
-Before you can run the code you will need to request an API Key from TheMobieDatabase.org.
+Before you can run the code you will need to request an API Key from https://www.themoviedb.org/.
 
-Once you have obtained the API Key will replace the build veriable api_key with the key in the Application's gradle.build
+Once you have obtained the API Key, browse to the gradle build and update api_key with the one that was provided by themoviedb.org.
