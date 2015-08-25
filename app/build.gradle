@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         // Add your key that you acquire from TheMovieDatabase.com here.
-        resValue "string", "api_key", "6b7d34276f18efcd11a02a76d26e62c8"
+        resValue "string", "api_key", "ADD API KEY HERE"
     }
     buildTypes {
         release {
